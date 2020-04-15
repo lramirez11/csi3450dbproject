@@ -36,12 +36,11 @@ public class software extends javax.swing.JFrame {
         Connect();
         load();
     }
+    
     Connection con;
     PreparedStatement pst;
     DefaultTableModel df;
     ResultSet rs;
-    
-    
     
     public void load() {
         int a;
@@ -89,7 +88,6 @@ public class software extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
     
 }
     /**

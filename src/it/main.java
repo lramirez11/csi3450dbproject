@@ -150,7 +150,6 @@ public class main extends javax.swing.JFrame {
         
         vendor v = new vendor();
         v.setVisible(true);
-        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

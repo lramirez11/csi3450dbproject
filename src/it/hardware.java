@@ -97,7 +97,6 @@ public class hardware extends javax.swing.JFrame {
             Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
         }
     
-    
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -435,9 +434,6 @@ public class hardware extends javax.swing.JFrame {
             String vendid = txtvendid.getText();
             int warrid = 0;
             
-            
-            
-            
             String query1 = "insert into HARDWARE(SN, MODEL, RAM, OS, COST, TYPE, EMPLOYEE_ID, VENDOR_ID)VALUES(?,?,?,?,?,?,?,?)";
             pst = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
             
@@ -456,7 +452,6 @@ public class hardware extends javax.swing.JFrame {
                 
                 warrid = rs.getInt(1);
             }
-            
             
             String query2 = "insert into WARRANTY(EXPIRDATE, STARTDATE, HARDWARE_ID)VALUES(?,?,?)";
             pst1 = con.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);

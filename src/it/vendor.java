@@ -29,17 +29,13 @@ public class vendor extends javax.swing.JFrame {
     public vendor() {
         initComponents();
         Connect();
-        load();
-        
+        load(); 
     }
     
     Connection con;
     PreparedStatement pst;
     DefaultTableModel df;
     ResultSet rs;
-    
-    
-    
     
     public void load() {
         int a;
@@ -52,7 +48,6 @@ public class vendor extends javax.swing.JFrame {
             a = rd.getColumnCount();
             df = (DefaultTableModel)jTable1.getModel();
             df.setRowCount(0);
-            
             
             while(rs.next())
             {
@@ -70,7 +65,6 @@ public class vendor extends javax.swing.JFrame {
                }
                df.addRow(v2);
             }
-            
             
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,8 +85,6 @@ public class vendor extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-    
 }
 
     /**
@@ -412,8 +404,6 @@ public class vendor extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
         } 
-        
-        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -445,10 +435,7 @@ public class vendor extends javax.swing.JFrame {
         
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        
+        }  
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -499,7 +486,6 @@ public class vendor extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-       
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtvsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtvsearchKeyReleased
@@ -529,8 +515,7 @@ public class vendor extends javax.swing.JFrame {
             }
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-           
+        }  
     }//GEN-LAST:event_txtvsearchKeyReleased
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -577,7 +562,6 @@ public class vendor extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
