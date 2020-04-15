@@ -147,6 +147,12 @@ public class hardware extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel2.setText("Search:");
 
+        txthsearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txthsearchKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -614,6 +620,46 @@ public class hardware extends javax.swing.JFrame {
             Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txthsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txthsearchKeyReleased
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            
+            String sql ="select * from HARDWARE, WARRANTY where HARDWARE.MODEL = ?";
+            pst = con.prepareStatement(sql);
+            pst.setString(1, txthsearch.getText());
+            
+            rs = pst.executeQuery();
+            if(rs.next()) {
+                String add1 = rs.getString("SN");
+                txthserial.setText(add1);
+                String add2 = rs.getString("MODEL");
+                txthmodel.setText(add2);
+                String add3 = rs.getString("RAM");
+                txthram.setText(add3);
+                String add4 = rs.getString("OS");
+                txthos.setText(add4);
+                String add5 = rs.getString("EMPLOYEE_ID");
+                txtempid.setText(add5);
+                String add6 = rs.getString("COST");
+                txthcost.setText(add6);
+                String add7 = rs.getString("TYPE");
+                txthtype.setText(add7);
+                String add8 = rs.getString("EXPIRDATE");
+                txthwarrend.setText(add8);
+                String add9 = rs.getString("STARTDATE");
+                txthwarrstart.setText(add9);
+                String add10 = rs.getString("VENDOR_ID");
+                txtvendid.setText(add10);
+                
+              
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+      
+    }//GEN-LAST:event_txthsearchKeyReleased
 
     /**
      * @param args the command line arguments

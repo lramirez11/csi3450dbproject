@@ -211,6 +211,12 @@ public class software extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel2.setText("Search:");
 
+        txtsoftsearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtsoftsearchKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -470,6 +476,32 @@ public class software extends javax.swing.JFrame {
             Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtsoftsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsoftsearchKeyReleased
+        // TODO add your handling code here:
+         try {
+            // TODO add your handling code here:
+            
+            String sql ="select * from SOFTWARE, EMPLOYEE, VENDOR where SOFTWARE.NAME = ?";
+            pst = con.prepareStatement(sql);
+            pst.setString(1, txtsoftsearch.getText());
+            
+            rs = pst.executeQuery();
+            if(rs.next()) {
+                String add1 = rs.getString("NAME");
+                txtsoft.setText(add1);
+                String add2 = rs.getString("COST");
+                txtsoftcost.setText(add2);
+                String add3 = rs.getString("EMPLOYEE_ID");
+                txtempid.setText(add3);
+                String add4 = rs.getString("VENDOR_ID");
+                txtvendid.setText(add4);
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+    }//GEN-LAST:event_txtsoftsearchKeyReleased
 
     /**
      * @param args the command line arguments

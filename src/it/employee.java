@@ -394,6 +394,12 @@ public class employee extends javax.swing.JFrame {
         jLabel20.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel20.setText("Search:");
 
+        txtempsearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtempsearchKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -735,6 +741,49 @@ public class employee extends javax.swing.JFrame {
         
         jButton1.setEnabled(false);
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void txtempsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtempsearchKeyReleased
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            
+            String sql ="select * from EMPLOYEE, JOB, DEPARTMENT where FNAME = ?";
+            pst = con.prepareStatement(sql);
+            pst.setString(1, txtempsearch.getText());
+            
+            rs = pst.executeQuery();
+            if(rs.next()) {
+                String add1 = rs.getString("FNAME");
+                txtempfirst.setText(add1);
+                String add2 = rs.getString("LNAME");
+                txtemplast.setText(add2);
+                String add3 = rs.getString("DOB");
+                txtempdob.setText(add3);
+                String add4 = rs.getString("PHONE");
+                txtempphone.setText(add4);
+                String add5 = rs.getString("EMAIL");
+                txtempemail.setText(add5);
+                String add6 = rs.getString("HIREDATE");
+                txtemphire.setText(add6);
+                String add7 = rs.getString("STATE");
+                txtempstate.setText(add7);
+                String add8 = rs.getString("CITY");
+                txtempcity.setText(add8);
+                String add9 = rs.getString("ZIP");
+                txtempzip.setText(add9);
+                String add10 = rs.getString("ADDRESS");
+                txtempaddress.setText(add10);
+                String add11 = rs.getString("TITLE");
+                txtempjob.setText(add11);
+                String add12 = rs.getString("PERMISSION_LEVEL");
+                txtempper.setText(add12);
+                String add13 = rs.getString("NAME");
+                txtempdepart.setText(add13);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+    }//GEN-LAST:event_txtempsearchKeyReleased
 
     /**
      * @param args the command line arguments
