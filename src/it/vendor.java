@@ -342,7 +342,7 @@ public class vendor extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(48, 48, 48)
@@ -509,6 +509,7 @@ public class vendor extends javax.swing.JFrame {
             String sql ="select * from VENDOR where NAME = ?";
             pst = con.prepareStatement(sql);
             pst.setString(1, txtvsearch.getText());
+            
             rs = pst.executeQuery();
             if(rs.next()) {
                 String add1 = rs.getString("NAME");

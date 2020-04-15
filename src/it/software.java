@@ -5,6 +5,23 @@
  */
 package it;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LuisRamirez
@@ -16,8 +33,65 @@ public class software extends javax.swing.JFrame {
      */
     public software() {
         initComponents();
+        Connect();
+        load();
     }
-
+    Connection con;
+    PreparedStatement pst;
+    DefaultTableModel df;
+    ResultSet rs;
+    
+    
+    
+    public void load() {
+        int a;
+        try {
+            pst = con.prepareStatement("select * from SOFTWARE, EMPLOYEE, VENDOR where SOFTWARE.EMPLOYEE_ID = EMPLOYEE.ID AND SOFTWARE.VENDOR_ID = VENDOR.ID");
+            
+            ResultSet rs = pst.executeQuery();
+            
+            ResultSetMetaData rd = rs.getMetaData();
+           
+            a = rd.getColumnCount();
+            df = (DefaultTableModel)jTable1.getModel();
+            df.setRowCount(0);
+            
+            while(rs.next())
+            {
+               Vector v2 = new Vector();
+               for(int i=1; i<=a; i++)
+               {
+                   v2.add(rs.getString("ID"));
+                   v2.add(rs.getString("NAME"));
+                   v2.add(rs.getString("COST"));
+                   v2.add(rs.getString("EMPLOYEE_ID"));
+                   v2.add(rs.getString("VENDOR_ID"));
+              
+               }
+               df.addRow(v2);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void Connect()
+    {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/IT_Management?allowPublicKeyRetrieval=true&useSSL=false", "root", "Bornready16");
+                   
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,15 +101,16 @@ public class software extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel9 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         txtsoft = new javax.swing.JTextField();
         txtsoftcost = new javax.swing.JTextField();
-        txtsoftstart = new javax.swing.JTextField();
-        txtsoftend = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtempid = new javax.swing.JTextField();
+        txtvendid = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
@@ -48,6 +123,8 @@ public class software extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
+        jLabel9.setText("jLabel9");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -56,9 +133,21 @@ public class software extends javax.swing.JFrame {
 
         jLabel4.setText("Software Cost:");
 
-        jLabel5.setText("Start Date:");
+        jLabel7.setText("Employee ID:");
 
-        jLabel6.setText("End Date:");
+        jLabel8.setText("Vendor ID:");
+
+        txtempid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtempidActionPerformed(evt);
+            }
+        });
+
+        txtvendid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtvendidActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -67,37 +156,38 @@ public class software extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4)
                     .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txtsoftcost, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                        .addComponent(txtsoftstart, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtsoftend, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(jLabel4)
+                    .addComponent(txtsoftcost, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtsoft, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel7)
+                    .addComponent(txtvendid)
+                    .addComponent(txtempid))
+                .addGap(70, 70, 70))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jLabel3)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel7))
                 .addGap(18, 18, 18)
-                .addComponent(txtsoft, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtsoft, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtempid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
-                .addComponent(jLabel4)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel8))
                 .addGap(18, 18, 18)
-                .addComponent(txtsoftcost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(txtsoftstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jLabel6)
-                .addGap(18, 18, 18)
-                .addComponent(txtsoftend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtsoftcost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtvendid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -108,6 +198,11 @@ public class software extends javax.swing.JFrame {
                 "SoftwareID", "Software Name", "Software Cost", "Employee ID", "Vendor ID"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
@@ -136,23 +231,48 @@ public class software extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtsoftsearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         jButton1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton1.setText("Add");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton2.setText("Edit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton3.setText("Delete");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton4.setText("Clear");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton5.setText("Home");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,26 +285,28 @@ public class software extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(58, 58, 58)
                         .addComponent(jLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton1)
                                 .addGap(65, 65, 65)
-                                .addComponent(jButton2)))
+                                .addComponent(jButton2)
+                                .addGap(59, 59, 59)
+                                .addComponent(jButton3))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(66, 66, 66)
-                                .addComponent(jButton3)
-                                .addGap(72, 72, 72)
+                                .addGap(40, 40, 40)
                                 .addComponent(jButton4)
-                                .addGap(77, 77, 77)
-                                .addComponent(jButton5))
+                                .addGap(167, 167, 167)
+                                .addComponent(jButton5)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 20, Short.MAX_VALUE))))
+                                .addGap(10, 10, 10)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(8, Short.MAX_VALUE))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,6 +333,145 @@ public class software extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtempidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtempidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtempidActionPerformed
+
+    private void txtvendidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtvendidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtvendidActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+            txtsoft.setText("");
+            txtsoftcost.setText("");
+            txtempid.setText("");
+            txtvendid.setText("");
+            txtsoft.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        try {
+            String sname = txtsoft.getText();
+            String scost = txtsoftcost.getText();
+            String empid = txtempid.getText();
+            String vendid = txtvendid.getText();
+            
+            // TODO add your handling code here:
+         
+            pst = con.prepareStatement("insert into SOFTWARE(NAME, COST, EMPLOYEE_ID, VENDOR_ID)values(?,?,?,?)");
+            pst.setString(1, sname);
+            pst.setString(2, scost);
+            pst.setString(3, empid);
+            pst.setString(4, vendid);
+            pst.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "Software Added Successfully");
+            
+            txtsoft.setText("");
+            txtsoftcost.setText("");
+            txtempid.setText("");
+            txtvendid.setText("");
+            txtsoft.requestFocus();
+            load();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+
+            String sname = txtsoft.getText();
+            String scost = txtsoftcost.getText();
+            String empid = txtempid.getText();
+            String vendid = txtvendid.getText();
+        // TODO add your handling code here:
+        try {
+            String query1 = "update SOFTWARE set NAME = ?, COST = ?, EMPLOYEE_ID = ?, VENDOR_ID = ? where ID = ?";
+            pst = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
+            pst.setString(1, sname);
+            pst.setString(2, scost);
+            pst.setString(3, empid);
+            pst.setString(4, vendid);
+            pst.setInt(5, id);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+
+            JOptionPane.showMessageDialog(this, "Software Updated Successfully");
+
+            txtsoft.setText("");
+            txtsoftcost.setText("");
+            txtempid.setText("");
+            txtvendid.setText("");
+            txtsoft.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        txtsoft.setText(df.getValueAt(selected, 1).toString());
+        txtsoftcost.setText(df.getValueAt(selected, 2).toString());
+        txtempid.setText(df.getValueAt(selected, 3).toString());
+        txtvendid.setText(df.getValueAt(selected, 4).toString());
+        
+        
+        jButton1.setEnabled(false);
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        
+        
+            // TODO add your handling code here:
+        try {         
+            pst = con.prepareStatement("delete from SOFTWARE  where id = ?");
+            pst.setInt(1, id);
+            pst.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "Software Deleted Successfully");
+            
+            txtsoft.setText("");
+            txtsoftcost.setText("");
+            txtempid.setText("");
+            txtvendid.setText(""); 
+            txtsoft.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(software.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -257,16 +518,17 @@ public class software extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField txtempid;
     private javax.swing.JTextField txtsoft;
     private javax.swing.JTextField txtsoftcost;
-    private javax.swing.JTextField txtsoftend;
     private javax.swing.JTextField txtsoftsearch;
-    private javax.swing.JTextField txtsoftstart;
+    private javax.swing.JTextField txtvendid;
     // End of variables declaration//GEN-END:variables
 }

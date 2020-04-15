@@ -36,7 +36,6 @@ public class employee extends javax.swing.JFrame {
         load();
     }
     
-    
     Connection con;
     PreparedStatement pst;
     PreparedStatement pst1;
@@ -44,7 +43,50 @@ public class employee extends javax.swing.JFrame {
     PreparedStatement pst3;
     DefaultTableModel df;
     ResultSet rs;
+    ResultSet rs1;
+    ResultSet rs2;
     
+    public void load() {
+        int a;
+        try {
+            pst = con.prepareStatement("select * from EMPLOYEE, JOB, DEPARTMENT where EMPLOYEE.ID = JOB.EMPLOYEE_ID AND DEPARTMENT.EMPLOYEE_ID = EMPLOYEE.ID");
+            
+            ResultSet rs = pst.executeQuery();
+            
+            ResultSetMetaData rd = rs.getMetaData();
+           
+            a = rd.getColumnCount();
+            df = (DefaultTableModel)jTable1.getModel();
+            df.setRowCount(0);
+            
+            while(rs.next())
+            {
+               Vector v2 = new Vector();
+               for(int i=1; i<=a; i++)
+               {
+                   v2.add(rs.getString("ID"));
+                   v2.add(rs.getString("FNAME"));
+                   v2.add(rs.getString("LNAME"));
+                   v2.add(rs.getString("DOB"));
+                   v2.add(rs.getString("PHONE"));
+                   v2.add(rs.getString("EMAIL"));
+                   v2.add(rs.getString("HIREDATE"));
+                   v2.add(rs.getString("STATE"));
+                   v2.add(rs.getString("CITY"));
+                   v2.add(rs.getString("ZIP"));
+                   v2.add(rs.getString("ADDRESS"));
+                   v2.add(rs.getString("TITLE"));
+                   v2.add(rs.getString("PERMISSION_LEVEL"));
+                   v2.add(rs.getString("NAME"));
+                   
+               }
+               df.addRow(v2);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     public void Connect()
     {
@@ -54,26 +96,13 @@ public class employee extends javax.swing.JFrame {
             
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/IT_Management?allowPublicKeyRetrieval=true&useSSL=false", "root", "Bornready16");
         
-        
-        
-        
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
         }
-                   
    
 }
-
-    public void load(){
-        
-    }
-    
-    
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -116,16 +145,14 @@ public class employee extends javax.swing.JFrame {
         txtempper = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
         txtempsearch = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1160, 720));
@@ -323,9 +350,6 @@ public class employee extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
-        jButton3.setText("Delete");
-
         jButton4.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton4.setText("Clear");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -334,17 +358,35 @@ public class employee extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        jButton3.setText("Delete");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         jButton5.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton5.setText("Home");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Employee ID", "First Name", "Last Name", "DOB", "Phone #", "Email", "Phone", "Date Of Hire", "State", "City", "Zip", "Address"
+                "Employee ID", "First ", "Last ", "DOB", "Phone #", "Email", "DOH", "State", "City", "Zip", "Address", "Job", "Permissions", "Department"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -373,56 +415,35 @@ public class employee extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Job Title", "Department", "Permissions Level", "Software ID", "Hardware ID"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                true, true, true, true, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(jTable2);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(200, 200, 200)
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 830, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(200, 200, 200)
+                                .addComponent(jLabel1))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton1)
                                 .addGap(62, 62, 62)
                                 .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(47, 47, 47)
                                 .addComponent(jButton3)
                                 .addGap(52, 52, 52)
                                 .addComponent(jButton4)
-                                .addGap(72, 72, 72)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
-                                .addComponent(jButton5)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane2))))
-                .addContainerGap())
+                                .addGap(122, 122, 122)
+                                .addComponent(jButton5)))))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -432,12 +453,9 @@ public class employee extends javax.swing.JFrame {
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addGap(58, 58, 58)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -453,7 +471,91 @@ public class employee extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+
+            String efirst = txtempfirst.getText();
+            String elast = txtemplast.getText();
+            String edob = txtempdob.getText();
+            String ephone = txtempphone.getText();
+            String eemail = txtempemail.getText();
+            String ehire = txtemphire.getText();
+            String estate = txtempstate.getText();
+            String ecity = txtempcity.getText();
+            String ezip = txtempzip.getText();
+            String eaddress = txtempaddress.getText();
+            String ejob = txtempjob.getText();
+            String edepart = txtempdepart.getText();
+            String eper = txtempper.getText();
+            int employid = 0;
+            int jobid = 0;
+            int departid = 0;
+            
+        // TODO add your handling code here:
+        try {
+            String query1 = "update EMPLOYEE set FNAME = ?, LNAME = ?, DOB = ?, PHONE = ?, EMAIL = ?, HIREDATE = ?, STATE = ?, CITY = ?, ZIP = ?, ADDRESS = ? where id = ?";
+            
+            pst = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
+            pst.setString(1, efirst);
+            pst.setString(2, elast);
+            pst.setString(3, edob);
+            pst.setString(4, ephone);
+            pst.setString(5, eemail);
+            pst.setString(6, ehire);
+            pst.setString(7, estate);
+            pst.setString(8, ecity);
+            pst.setString(9, ezip);
+            pst.setString(10, eaddress);
+            pst.setInt(11, id);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            
+            if(rs.next()){
+                
+                employid = rs.getInt(1);
+            }
+            
+            String query2 = "update JOB set TITLE = ?, PERMISSION_LEVEL = ? where ID = ?";
+            pst1 = con.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);
+            pst1.setString(1, ejob);
+            pst1.setString(2, eper);
+            
+            pst1.setInt(3, id);
+            pst1.executeUpdate();
+            rs = pst1.getGeneratedKeys();
+            
+            String query3 = "update DEPARTMENT set NAME = ? WHERE ID = ?";
+            pst2 = con.prepareStatement(query3, Statement.RETURN_GENERATED_KEYS);
+            pst2.setString(1, edepart);
+            
+            pst2.setInt(2, id);
+            pst2.executeUpdate();
+            rs = pst1.getGeneratedKeys();
+          
+            JOptionPane.showMessageDialog(this, "Employee Updated Successfully");
+
+            txtempfirst.setText("");
+            txtemplast.setText("");
+            txtempdob.setText("");
+            txtempphone.setText("");
+            txtempemail.setText("");
+            txtemphire.setText("");
+            txtempstate.setText("");
+            txtempcity.setText("");
+            txtempzip.setText("");
+            txtempaddress.setText("");
+            txtempjob.setText("");
+            txtempdepart.setText("");
+            txtempper.setText("");
+            txtempfirst.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtemphireActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtemphireActionPerformed
@@ -462,7 +564,6 @@ public class employee extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            
             
             String efirst = txtempfirst.getText();
             String elast = txtemplast.getText();
@@ -476,19 +577,16 @@ public class employee extends javax.swing.JFrame {
             String eaddress = txtempaddress.getText();
             
             String ejob = txtempjob.getText();
-            String edepart = txtempdepart.getText();
             String eper = txtempper.getText();
+            String edepart = txtempdepart.getText();
+            
             int employid = 0;
             int jobid = 0;
             int departid = 0;
            
-            
-            
-            
             // TODO add your handling code here:
             String query1 = "insert into EMPLOYEE(FNAME, LNAME, DOB, PHONE, EMAIL, HIREDATE, STATE, CITY, ZIP, ADDRESS)VALUES(?,?,?,?,?,?,?,?,?,?)";
             pst = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
-            
             
             pst.setString(1, efirst);
             pst.setString(2, elast);
@@ -508,7 +606,6 @@ public class employee extends javax.swing.JFrame {
                 employid = rs.getInt(1);
             }
             
-            
             String query2 = "insert into JOB(TITLE, PERMISSION_LEVEL, EMPLOYEE_ID)values(?,?,?)";
             pst1 = con.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);
             
@@ -523,31 +620,14 @@ public class employee extends javax.swing.JFrame {
                 jobid = rs.getInt(1);
             }
             
-           
-                
-            
-            String query3 = "insert into DEPARTMENT(NAME)VALUES(?)";
+            String query3 = "insert into DEPARTMENT(NAME, EMPLOYEE_ID)VALUES(?,?)";
             pst2 = con.prepareStatement(query3, Statement.RETURN_GENERATED_KEYS);
             
             pst2.setString(1, edepart);
+            pst2.setInt(2, employid);
             pst2.executeUpdate();
             rs = pst2.getGeneratedKeys();
-            
-            if(rs.next()){
-                
-                departid = rs.getInt(1);
-            }
-            
-           
-            /*String query4= "insert into DEPART_EMPLOYEE(EMPLOYEE_ID, DEPARTMENT_ID)VALUES(?,?)";
-            pst3 = con.prepareStatement(query4, Statement.RETURN_GENERATED_KEYS);
-            
-            pst3.setInt(1, employid);
-            pst3.setInt(2, departid);
-            pst3.executeUpdate();
-            rs = pst3.getGeneratedKeys();*/
-            
-            
+
             JOptionPane.showMessageDialog(this, "Employee Added Successfully");
             
             txtempfirst.setText("");
@@ -564,14 +644,7 @@ public class employee extends javax.swing.JFrame {
             txtempdepart.setText("");
             txtempper.setText("");
             txtempfirst.requestFocus();
-        
-        
-        
-        
-        
-        
-        
-        
+            load();
         
         } catch (SQLException ex) {
             Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
@@ -598,6 +671,70 @@ public class employee extends javax.swing.JFrame {
             load();
             jButton1.setEnabled(true);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        
+        try {
+            // TODO add your handling code here:
+                 
+            pst = con.prepareStatement("delete from EMPLOYEE where id = ?");
+            pst.setInt(1, id);
+            pst.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "Employee Deleted Successfully");
+            
+            txtempfirst.setText("");
+            txtemplast.setText("");
+            txtempdob.setText("");
+            txtempphone.setText("");
+            txtempemail.setText("");
+            txtemphire.setText("");
+            txtempstate.setText("");
+            txtempcity.setText("");
+            txtempzip.setText("");
+            txtempaddress.setText("");
+            txtempjob.setText("");
+            txtempdepart.setText("");
+            txtempper.setText("");
+            load();
+            jButton1.setEnabled(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
+           
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+         df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        txtempfirst.setText(df.getValueAt(selected, 1).toString());
+        txtemplast.setText(df.getValueAt(selected, 2).toString());
+        txtempdob.setText(df.getValueAt(selected, 3).toString());
+        txtempphone.setText(df.getValueAt(selected, 4).toString());
+        txtempemail.setText(df.getValueAt(selected, 5).toString());
+        txtemphire.setText(df.getValueAt(selected, 6).toString());
+        txtempstate.setText(df.getValueAt(selected, 7).toString());
+        txtempcity.setText(df.getValueAt(selected, 8).toString());
+        txtempzip.setText(df.getValueAt(selected, 9).toString());
+        txtempaddress.setText(df.getValueAt(selected, 10).toString());
+        txtempjob.setText(df.getValueAt(selected, 11).toString());
+        txtempper.setText(df.getValueAt(selected, 12).toString());
+        txtempdepart.setText(df.getValueAt(selected, 13).toString());
+        
+        jButton1.setEnabled(false);
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -660,9 +797,7 @@ public class employee extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField txtempaddress;
     private javax.swing.JTextField txtempcity;
     private javax.swing.JTextField txtempdepart;

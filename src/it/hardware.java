@@ -5,6 +5,23 @@
  */
 package it;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LuisRamirez
@@ -16,8 +33,72 @@ public class hardware extends javax.swing.JFrame {
      */
     public hardware() {
         initComponents();
+        Connect();
+        load();
+    }
+    
+    Connection con;
+    PreparedStatement pst;
+    PreparedStatement pst1;
+    PreparedStatement pst2;
+    DefaultTableModel df;
+    ResultSet rs;
+    
+    public void load() {
+        int a;
+        try {
+            pst = con.prepareStatement("select * from HARDWARE, WARRANTY where HARDWARE.ID = WARRANTY.HARDWARE_ID");
+            
+            ResultSet rs = pst.executeQuery();
+            
+            ResultSetMetaData rd = rs.getMetaData();
+           
+            a = rd.getColumnCount();
+            df = (DefaultTableModel)jTable1.getModel();
+            df.setRowCount(0);
+            
+            while(rs.next())
+            {
+               Vector v2 = new Vector();
+               for(int i=1; i<=a; i++)
+               {
+                   v2.add(rs.getString("ID"));
+                   v2.add(rs.getString("SN"));
+                   v2.add(rs.getString("MODEL"));
+                   v2.add(rs.getString("RAM"));
+                   v2.add(rs.getString("OS"));
+                   v2.add(rs.getString("COST"));
+                   v2.add(rs.getString("TYPE"));
+                   v2.add(rs.getString("EMPLOYEE_ID"));
+                   v2.add(rs.getString("EXPIRDATE"));
+                   v2.add(rs.getString("STARTDATE"));
+                   v2.add(rs.getString("VENDOR_ID"));
+                  
+               }
+               df.addRow(v2);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    public void Connect()
+    {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/IT_Management?allowPublicKeyRetrieval=true&useSSL=false", "root", "Bornready16");
+                   
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,6 +129,10 @@ public class hardware extends javax.swing.JFrame {
         txthwarrstart = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         txthwarrend = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        txtempid = new javax.swing.JTextField();
+        txtvendid = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
@@ -89,13 +174,13 @@ public class hardware extends javax.swing.JFrame {
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabel3.setText("Hardware Model:");
+        jLabel3.setText("Hardware Serial:");
 
-        jLabel4.setText("Hardware Serial:");
+        jLabel4.setText("Hardware Model:");
 
-        jLabel5.setText("Hardware OS:");
+        jLabel5.setText("Hardware RAM:");
 
-        jLabel6.setText("Hardware RAM:");
+        jLabel6.setText("Hardware OS:");
 
         jLabel7.setText("Hardware Cost:");
 
@@ -104,6 +189,16 @@ public class hardware extends javax.swing.JFrame {
         jLabel9.setText("Warranty Start:");
 
         jLabel10.setText("Warranty Expir.:");
+
+        jLabel11.setText("Employee ID");
+
+        jLabel12.setText("Vendor ID");
+
+        txtempid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtempidActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -117,10 +212,13 @@ public class hardware extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(txthmodel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txthos, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(txthserial, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(txthram, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txthram, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(jLabel11)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtempid, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                        .addComponent(txthos, javax.swing.GroupLayout.Alignment.LEADING)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
@@ -130,7 +228,10 @@ public class hardware extends javax.swing.JFrame {
                     .addComponent(txthcost, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txthtype, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txthwarrstart, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txthwarrend, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel12)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtvendid, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txthwarrend, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)))
                 .addGap(32, 32, 32))
         );
         jPanel2Layout.setVerticalGroup(
@@ -142,33 +243,41 @@ public class hardware extends javax.swing.JFrame {
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txthmodel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txthcost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txthcost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txthserial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txthserial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txthtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txthtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txthmodel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txthos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txthwarrstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txthwarrstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txthram, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txthram, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txthwarrend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(95, Short.MAX_VALUE))
+                    .addComponent(txthwarrend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txthos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel12))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtempid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtvendid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -176,25 +285,55 @@ public class hardware extends javax.swing.JFrame {
 
             },
             new String [] {
-                "HW ID", "HW Model", "HW Serial", "HW OS", "HW RAM", "HW Cost", "HW Type", "HW Start", "HW End", "Employee ID", "Vendor ID"
+                "HW ID", "HW Serial", "HW Model", "HW RAM", "HW OS", "HW Cost", "HW Type", "Employee ID", "HW End", "HW Start", "Vendor ID"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton1.setText("Add");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton2.setText("Edit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton3.setText("Delete");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton4.setText("Clear");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jButton5.setText("Home");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -204,23 +343,26 @@ public class hardware extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(50, 50, 50)
-                        .addComponent(jButton2)
-                        .addGap(47, 47, 47)
-                        .addComponent(jButton3)
-                        .addGap(44, 44, 44)
-                        .addComponent(jButton4)
-                        .addGap(95, 95, 95)
-                        .addComponent(jButton5))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addGap(50, 50, 50)
+                                .addComponent(jButton2)
+                                .addGap(47, 47, 47)
+                                .addComponent(jButton3)
+                                .addGap(44, 44, 44)
+                                .addComponent(jButton4)
+                                .addGap(95, 95, 95)
+                                .addComponent(jButton5))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(89, 89, 89)
+                                .addComponent(jLabel1)))
+                        .addGap(0, 451, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(89, 89, 89)
-                        .addComponent(jLabel1)))
+                        .addGap(24, 24, 24)
+                        .addComponent(jScrollPane1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -237,7 +379,7 @@ public class hardware extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -249,6 +391,234 @@ public class hardware extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtempidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtempidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtempidActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+            txthserial.setText("");
+            txthmodel.setText("");
+            txthram.setText("");
+            txthos.setText("");
+            txtempid.setText("");
+            txthcost.setText("");
+            txthtype.setText("");
+            txthwarrend.setText("");
+            txthwarrstart.setText("");
+            txtvendid.setText("");
+            txthserial.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+         
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            // TODO add your handling code here:
+            
+            String hserial = txthserial.getText();
+            String hmodel = txthmodel.getText();
+            String hram = txthram.getText();
+            String hos = txthos.getText();
+            String empid = txtempid.getText();
+            String hcost = txthcost.getText();
+            String htype = txthtype.getText();
+            String hwarrend = txthwarrend.getText();
+            String hwarrstart = txthwarrstart.getText();
+            String vendid = txtvendid.getText();
+            int warrid = 0;
+            
+            
+            
+            
+            String query1 = "insert into HARDWARE(SN, MODEL, RAM, OS, COST, TYPE, EMPLOYEE_ID, VENDOR_ID)VALUES(?,?,?,?,?,?,?,?)";
+            pst = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
+            
+            pst.setString(1, hserial);
+            pst.setString(2, hmodel);
+            pst.setString(3, hram);
+            pst.setString(4, hos);
+            pst.setString(5, hcost);
+            pst.setString(6, htype);
+            pst.setString(7, empid );
+            pst.setString(8, vendid);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            
+            if(rs.next()){
+                
+                warrid = rs.getInt(1);
+            }
+            
+            
+            String query2 = "insert into WARRANTY(EXPIRDATE, STARTDATE, HARDWARE_ID)VALUES(?,?,?)";
+            pst1 = con.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);
+            pst1.setString(1, hwarrend);
+            pst1.setString(2, hwarrstart);
+            pst1.setInt(3, warrid);
+            pst1.executeUpdate();
+            rs = pst1.getGeneratedKeys();
+            
+            if(rs.next()){
+                
+                warrid = rs.getInt(1);
+            }
+            
+            JOptionPane.showMessageDialog(this, "Hardware Added Successfully");
+            
+            txthserial.setText("");
+            txthmodel.setText("");
+            txthram.setText("");
+            txthos.setText("");
+            txtempid.setText("");
+            txthcost.setText("");
+            txthtype.setText("");
+            txthwarrend.setText("");
+            txthwarrstart.setText("");
+            txtvendid.setText("");
+            txthserial.requestFocus();
+            load();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        txthserial.setText(df.getValueAt(selected, 1).toString());
+        txthmodel.setText(df.getValueAt(selected, 2).toString());
+        txthram.setText(df.getValueAt(selected, 3).toString());
+        txthos.setText(df.getValueAt(selected, 4).toString());
+        txthcost.setText(df.getValueAt(selected, 5).toString());
+        txthtype.setText(df.getValueAt(selected, 6).toString());
+        txtempid.setText(df.getValueAt(selected, 7).toString());
+        txthwarrend.setText(df.getValueAt(selected, 8).toString());
+        txthwarrstart.setText(df.getValueAt(selected, 9).toString());
+        txtvendid.setText(df.getValueAt(selected, 10).toString());
+      
+        jButton1.setEnabled(false);
+        
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+
+            String hserial = txthserial.getText();
+            String hmodel = txthmodel.getText();
+            String hram = txthram.getText();
+            String hos = txthos.getText();
+            String empid = txtempid.getText();
+            String hcost = txthcost.getText();
+            String htype = txthtype.getText();
+            String hwarrend = txthwarrend.getText();
+            String hwarrstart = txthwarrstart.getText();
+            String vendid = txtvendid.getText();
+            int warrid = 0;
+            
+        // TODO add your handling code here:
+        
+        String query2 = "update HARDWARE set SN = ?, MODEL = ?, RAM = ?, OS = ?, COST = ?, TYPE = ?, EMPLOYEE_ID = ?, VENDOR_ID = ? where ID = ?";
+         try{   
+            pst = con.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);
+            pst.setString(1, hserial);
+            pst.setString(2, hmodel);
+            pst.setString(3, hram);
+            pst.setString(4, hos);
+            pst.setString(5, hcost);
+            pst.setString(6, htype);
+            pst.setString(7, empid );
+            pst.setString(8, vendid);
+            pst.setInt(9, id);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            
+            if(rs.next()){
+                
+                warrid = rs.getInt(1);
+            }
+        
+            String query1 = "update WARRANTY set EXPIRDATE = ?, STARTDATE = ? where id =?";
+            pst1 = con.prepareStatement(query1, Statement.RETURN_GENERATED_KEYS);
+            pst1.setString(1, hwarrend);
+            pst1.setString(2, hwarrstart);
+            
+            pst1.setInt(3, id);
+            pst1.executeUpdate();
+            rs = pst1.getGeneratedKeys();
+           
+            JOptionPane.showMessageDialog(this, "Software Updated Successfully");
+
+            txthserial.setText("");
+            txthmodel.setText("");
+            txthram.setText("");
+            txthos.setText("");
+            txtempid.setText("");
+            txthcost.setText("");
+            txthtype.setText("");
+            txthwarrend.setText("");
+            txthwarrstart.setText("");
+            txtvendid.setText("");
+            txthserial.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        
+        df = (DefaultTableModel)jTable1.getModel();
+        int selected = jTable1.getSelectedRow();
+        int id = Integer.parseInt(df.getValueAt(selected, 0).toString());
+        
+        try {
+            // TODO add your handling code here:
+                 
+            pst = con.prepareStatement("delete from HARDWARE where ID = ?");
+            pst.setInt(1, id);
+            pst.executeUpdate();
+            
+            
+            JOptionPane.showMessageDialog(this, "Hardware Deleted Successfully");
+            
+            txthserial.setText("");
+            txthmodel.setText("");
+            txthram.setText("");
+            txthos.setText("");
+            txtempid.setText("");
+            txthcost.setText("");
+            txthtype.setText("");
+            txthwarrend.setText("");
+            txthwarrstart.setText("");
+            txtvendid.setText("");
+            txthserial.requestFocus();
+            load();
+            jButton1.setEnabled(true);
+            
+            } catch (SQLException ex) {
+            Logger.getLogger(hardware.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -293,6 +663,8 @@ public class hardware extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -305,6 +677,7 @@ public class hardware extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField txtempid;
     private javax.swing.JTextField txthcost;
     private javax.swing.JTextField txthmodel;
     private javax.swing.JTextField txthos;
@@ -314,5 +687,6 @@ public class hardware extends javax.swing.JFrame {
     private javax.swing.JTextField txthtype;
     private javax.swing.JTextField txthwarrend;
     private javax.swing.JTextField txthwarrstart;
+    private javax.swing.JTextField txtvendid;
     // End of variables declaration//GEN-END:variables
 }
